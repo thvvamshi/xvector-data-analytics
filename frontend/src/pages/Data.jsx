@@ -40,7 +40,7 @@ function Data() {
         },
       });
 
-      setDatasets(res.data.items);
+      setDatasets(res.data.items || []);
       setTotalPages(res.data.pages);
     } catch (err) {
       console.error(err);

@@ -43,16 +43,19 @@ function Analytics() {
     };
   }, []);
 
-  const fetchDatasets = async () => {
-    try {
-      setError("");
-      const res = await api.get("/dataset");
-      setDatasets(res.data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load datasets.");
-    }
-  };
+const fetchDatasets = async () => {
+  try {
+    setError("");
+
+    const res = await api.get("/dataset");
+
+    setDatasets(res.data.items || []);
+  } catch (err) {
+    console.error(err);
+    setDatasets([]);
+    setError("Failed to load datasets.");
+  }
+};
 
   const handleDatasetChange = (datasetId) => {
     setSelectedDatasetId(datasetId);
