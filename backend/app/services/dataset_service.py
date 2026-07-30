@@ -209,7 +209,7 @@ def get_plot_data(
     if actual_x is None or actual_y is None:
         return "COLUMN_NOT_FOUND"
 
-    dataframe = dataframe[[actual_x, actual_y]].dropna()
+    dataframe = (dataframe[[actual_x, actual_y]].dropna().head(30))
 
     return {
         "x": actual_x,
