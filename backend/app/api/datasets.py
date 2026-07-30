@@ -32,7 +32,10 @@ from app.services.dataset_service import (
     delete_dataset,
 )
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/dataset",
+    tags=["Dataset"],
+)
 
 
 @router.post(
