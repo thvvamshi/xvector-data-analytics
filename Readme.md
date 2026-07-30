@@ -4,6 +4,13 @@ A full-stack data analytics application that enables authenticated users to uplo
 
 Built as part of the **XVector Labs Full Stack Developer Assessment**.
 
+## 🌐 Live Demo
+
+| Resource | Link |
+|----------|------|
+| Frontend | https://xvector-data-analytics-1.onrender.com |
+| Backend API | https://xvector-data-analytics.onrender.com |
+| API Documentation | https://xvector-data-analytics.onrender.com/docs |
 
 ## Repository
 
