@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import api from "../services/api";
 
 function Login() {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -40,11 +38,10 @@ function Login() {
 
       localStorage.setItem("token", res.data.access_token);
 
-      navigate("/");
+      // Redirect to authenticated home
+      window.location.replace("/home");
     } catch (err) {
-      setError(
-        err.response?.data?.detail || "Login failed"
-      );
+      setError(err.response?.data?.detail || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -52,10 +49,11 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <form
-        className="auth-card"
-        onSubmit={handleSubmit}
-      >
+      <Link to="/" className="back-link">
+        ← Back to Home
+      </Link>
+
+      <form className="auth-card" onSubmit={handleSubmit}>
         <h2>Login</h2>
 
         <input
@@ -76,24 +74,15 @@ function Login() {
           required
         />
 
-        {error && (
-          <p className="error">
-            {error}
-          </p>
-        )}
+        {error && <p className="error">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-        >
+        <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
 
         <p>
           Don't have an account?{" "}
-          <Link to="/register">
-            Register
-          </Link>
+          <Link to="/register">Register</Link>
         </p>
       </form>
     </div>
