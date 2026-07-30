@@ -73,16 +73,36 @@ def save_dataset_rows(
     db.commit()
 
 
+from math import ceil
+
+
 def get_user_datasets(
     db: Session,
     owner: User,
+    page: int,
+    limit: int,
 ):
-    return (
+    query = (
         db.query(Dataset)
         .filter(Dataset.owner_id == owner.id)
         .order_by(Dataset.created_at.desc())
+    )
+
+    total = query.count()
+
+    datasets = (
+        query.offset((page - 1) * limit)
+        .limit(limit)
         .all()
     )
+
+    return {
+        "items": datasets,
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "pages": ceil(total / limit) if total else 1,
+    }
 
 
 def get_column_statistics(

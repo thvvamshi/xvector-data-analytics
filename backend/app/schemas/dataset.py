@@ -42,3 +42,10 @@ class PlotResponse(BaseModel):
     x: str
     y: str
     data: list[list[Any]]
+
+class PaginatedDatasetResponse(BaseModel):
+    items: list[DatasetResponse]
+    page: int
+    limit: int
+    total: int
+    pages: int

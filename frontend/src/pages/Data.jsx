@@ -12,6 +12,9 @@ function Data() {
   const [preview, setPreview] = useState([]);
   const [columns, setColumns] = useState([]);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   // Separate loading states for localized UI feedback
   const [uploading, setUploading] = useState(false);
 
@@ -25,13 +28,20 @@ function Data() {
 
   useEffect(() => {
     fetchDatasets();
-  }, []);
+  }, [page]);
 
   const fetchDatasets = async () => {
     try {
       setError("");
-      const res = await api.get("/dataset");
-      setDatasets(res.data);
+      const res = await api.get("/dataset", {
+        params: {
+          page,
+          limit: 10,
+        },
+      });
+
+      setDatasets(res.data.items);
+      setTotalPages(res.data.pages);
     } catch (err) {
       console.error(err);
       setDatasets([]);
@@ -264,6 +274,22 @@ function Data() {
             ) : (
               <p>Select a dataset to preview.</p>
             )}
+          </div>
+          <div className="pagination">
+            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+              Previous
+            </button>
+
+            <span>
+              Page {page} of {totalPages}
+            </span>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

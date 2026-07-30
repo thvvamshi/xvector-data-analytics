@@ -1,4 +1,5 @@
 import io
+from fastapi import Query
 
 import pandas as pd
 from fastapi import (
@@ -21,6 +22,7 @@ from app.schemas.dataset import (
     DatasetUploadResponse,
      ColumnStatsResponse,
      PlotResponse,
+     PaginatedDatasetResponse,
 )
 from app.services.dataset_service import (
     create_dataset,
@@ -102,15 +104,19 @@ async def upload_dataset(
 
 @router.get(
     "/",
-    response_model=list[DatasetResponse],
+    response_model=PaginatedDatasetResponse,
 )
 def list_datasets(
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     return get_user_datasets(
         db=db,
         owner=current_user,
+        page=page,
+        limit=limit,
     )
 
 
@@ -120,7 +126,7 @@ def list_datasets(
 )
 def preview_dataset(
     dataset_id: str,
-    limit: int = 10,
+    limit: int = 25,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
