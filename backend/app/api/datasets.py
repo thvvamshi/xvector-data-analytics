@@ -1,0 +1,132 @@
+import io
+
+import pandas as pd
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+    status,
+)
+from sqlalchemy.orm import Session
+
+from app.auth.dependencies import get_current_user
+from app.database import get_db
+from app.models import User
+from app.schemas.dataset import (
+    DatasetPreviewResponse,
+    DatasetResponse,
+    DatasetUploadResponse,
+)
+from app.services.dataset_service import (
+    create_dataset,
+    get_dataset_preview,
+    get_user_datasets,
+    save_dataset_rows,
+)
+
+router = APIRouter()
+
+
+@router.post(
+    "/upload",
+    response_model=DatasetUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def upload_dataset(
+    name: str = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No file uploaded.",
+        )
+
+    if not file.filename.lower().endswith(".csv"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only CSV files are supported.",
+        )
+
+    try:
+        contents = await file.read()
+        dataframe = pd.read_csv(io.BytesIO(contents))
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid CSV file.",
+        )
+
+    if dataframe.empty:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="CSV file is empty.",
+        )
+
+    dataframe = dataframe.fillna("")
+
+    dataset = create_dataset(
+        db=db,
+        owner=current_user,
+        name=name,
+        columns=list(dataframe.columns),
+    )
+
+    save_dataset_rows(
+        db=db,
+        dataset=dataset,
+        rows=dataframe.to_dict(orient="records"),
+    )
+
+    return {
+        "id": dataset.id,
+        "name": dataset.name,
+        "columns": dataset.columns,
+        "rows": len(dataframe),
+        "created_at": dataset.created_at,
+    }
+
+
+@router.get(
+    "/",
+    response_model=list[DatasetResponse],
+)
+def list_datasets(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return get_user_datasets(
+        db=db,
+        owner=current_user,
+    )
+
+
+@router.get(
+    "/{dataset_id}/preview",
+    response_model=DatasetPreviewResponse,
+)
+def preview_dataset(
+    dataset_id: str,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    preview = get_dataset_preview(
+        db,
+        dataset_id,
+        current_user.id,
+        limit,
+    )
+
+    if preview is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    return preview

@@ -16,17 +16,25 @@ class Dataset(Base):
         default=lambda: str(uuid4()),
     )
 
-    name: Mapped[str] = mapped_column(String)
+    name: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+    )
 
     owner_id: Mapped[str] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
     )
 
-    columns: Mapped[list] = mapped_column(JSON)
+    columns: Mapped[list] = mapped_column(
+        JSON,
+        nullable=False,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow,
+        nullable=False,
     )
 
     owner = relationship(
