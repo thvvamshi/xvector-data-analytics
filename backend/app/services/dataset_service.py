@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+import pandas as pd
 
 from app.models import Dataset, DatasetRow, User
+
 
 def get_dataset_preview(
     db: Session,
@@ -81,3 +83,64 @@ def get_user_datasets(
         .order_by(Dataset.created_at.desc())
         .all()
     )
+
+
+def get_column_statistics(
+    db: Session,
+    dataset_id: str,
+    owner_id: str,
+    column: str,
+):
+    dataset = (
+        db.query(Dataset)
+        .filter(
+            Dataset.id == dataset_id,
+            Dataset.owner_id == owner_id,
+        )
+        .first()
+    )
+
+    if not dataset:
+        return None
+
+    rows = (
+        db.query(DatasetRow)
+        .filter(DatasetRow.dataset_id == dataset_id)
+        .all()
+    )
+
+    if not rows:
+        return None
+
+    dataframe = pd.DataFrame(
+        [row.row_data for row in rows]
+    )
+
+    # Case-insensitive column lookup
+    column_map = {
+        col.lower(): col
+        for col in dataframe.columns
+    }
+
+    actual_column = column_map.get(column.lower())
+
+    if actual_column is None:
+        return "COLUMN_NOT_FOUND"
+
+    series = pd.to_numeric(
+        dataframe[actual_column],
+        errors="coerce",
+    ).dropna()
+
+    if series.empty:
+        return "NOT_NUMERIC"
+
+    return {
+        "column": actual_column,
+        "count": int(series.count()),
+        "mean": round(float(series.mean()), 2),
+        "median": float(series.median()),
+        "mode": float(series.mode().iloc[0]),
+        "min": float(series.min()),
+        "max": float(series.max()),
+    }

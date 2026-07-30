@@ -19,12 +19,14 @@ from app.schemas.dataset import (
     DatasetPreviewResponse,
     DatasetResponse,
     DatasetUploadResponse,
+     ColumnStatsResponse,
 )
 from app.services.dataset_service import (
     create_dataset,
     get_dataset_preview,
     get_user_datasets,
     save_dataset_rows,
+    get_column_statistics,
 )
 
 router = APIRouter()
@@ -130,3 +132,41 @@ def preview_dataset(
         )
 
     return preview
+
+
+@router.get(
+    "/{dataset_id}/stats",
+    response_model=ColumnStatsResponse,
+)
+def dataset_statistics(
+    dataset_id: str,
+    column: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    stats = get_column_statistics(
+        db,
+        dataset_id,
+        current_user.id,
+        column,
+    )
+
+    if stats is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    if stats == "COLUMN_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Column not found",
+        )
+
+    if stats == "NOT_NUMERIC":
+        raise HTTPException(
+            status_code=400,
+            detail="Column is not numeric",
+        )
+
+    return stats

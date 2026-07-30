@@ -28,3 +28,12 @@ class DatasetPreviewResponse(BaseModel):
     name: str
     columns: list[str]
     rows: list[dict[str, Any]]  
+
+class ColumnStatsResponse(BaseModel):
+    column: str
+    count: int
+    mean: float
+    median: float
+    mode: float
+    min: float
+    max: float
