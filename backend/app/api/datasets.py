@@ -20,6 +20,7 @@ from app.schemas.dataset import (
     DatasetResponse,
     DatasetUploadResponse,
      ColumnStatsResponse,
+     PlotResponse,
 )
 from app.services.dataset_service import (
     create_dataset,
@@ -27,6 +28,8 @@ from app.services.dataset_service import (
     get_user_datasets,
     save_dataset_rows,
     get_column_statistics,
+    get_plot_data,
+    delete_dataset,
 )
 
 router = APIRouter()
@@ -170,3 +173,63 @@ def dataset_statistics(
         )
 
     return stats
+
+
+@router.get(
+    "/{dataset_id}/plot",
+    response_model=PlotResponse,
+)
+def dataset_plot(
+    dataset_id: str,
+    x: str,
+    y: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    plot = get_plot_data(
+        db,
+        dataset_id,
+        current_user.id,
+        x,
+        y,
+    )
+
+    if plot is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    if plot == "COLUMN_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Column not found",
+        )
+
+    return plot
+
+
+
+@router.delete(
+    "/{dataset_id}",
+)
+def remove_dataset(
+    dataset_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    deleted = delete_dataset(
+        db,
+        dataset_id,
+        current_user.id,
+    )
+
+    if not deleted:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    return {
+        "message": "Dataset deleted successfully",
+    }

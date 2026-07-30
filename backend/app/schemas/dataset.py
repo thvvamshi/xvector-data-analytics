@@ -37,3 +37,8 @@ class ColumnStatsResponse(BaseModel):
     mode: float
     min: float
     max: float
+
+class PlotResponse(BaseModel):
+    x: str
+    y: str
+    data: list[list[Any]]

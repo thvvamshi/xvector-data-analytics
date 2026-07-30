@@ -144,3 +144,77 @@ def get_column_statistics(
         "min": float(series.min()),
         "max": float(series.max()),
     }
+
+
+def get_plot_data(
+    db: Session,
+    dataset_id: str,
+    owner_id: str,
+    x_column: str,
+    y_column: str,
+):
+    dataset = (
+        db.query(Dataset)
+        .filter(
+            Dataset.id == dataset_id,
+            Dataset.owner_id == owner_id,
+        )
+        .first()
+    )
+
+    if not dataset:
+        return None
+
+    rows = (
+        db.query(DatasetRow)
+        .filter(DatasetRow.dataset_id == dataset_id)
+        .all()
+    )
+
+    if not rows:
+        return None
+
+    dataframe = pd.DataFrame(
+        [row.row_data for row in rows]
+    )
+
+    column_map = {
+        col.lower(): col
+        for col in dataframe.columns
+    }
+
+    actual_x = column_map.get(x_column.lower())
+    actual_y = column_map.get(y_column.lower())
+
+    if actual_x is None or actual_y is None:
+        return "COLUMN_NOT_FOUND"
+
+    dataframe = dataframe[[actual_x, actual_y]].dropna()
+
+    return {
+        "x": actual_x,
+        "y": actual_y,
+        "data": dataframe.values.tolist(),
+    }
+
+def delete_dataset(
+    db: Session,
+    dataset_id: str,
+    owner_id: str,
+):
+    dataset = (
+        db.query(Dataset)
+        .filter(
+            Dataset.id == dataset_id,
+            Dataset.owner_id == owner_id,
+        )
+        .first()
+    )
+
+    if not dataset:
+        return False
+
+    db.delete(dataset)
+    db.commit()
+
+    return True
