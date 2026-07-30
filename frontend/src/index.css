@@ -1,13 +1,135 @@
-* {
+   /* 1. DESIGN TOKENS & RESET */
+
+:root {
+  /* Colors */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --error-bg: #f2dede;
+  --error-text: #d9534f;
+
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #ffffff;
+
+  --bg-main: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-alt: #f8fafc;
+  --bg-hover: #eef4ff;
+
+  --border-color: #e5e7eb;
+  --border-dark: #d1d5db;
+
+  /* Layout & Design */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --font-base: Arial, Helvetica, sans-serif;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.2s ease;
+}
+
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-base);
 }
 
 body {
-  background: #f5f7fb;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
 }
+
+   /* 2. REUSABLE FORM & UI ELEMENTS */
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  background-color: var(--bg-card);
+  transition: var(--transition);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary);
+  color: var(--text-light);
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error {
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+   /* 3. NAVIGATION */
+
+.navbar, .home-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background-color: var(--primary);
+  color: var(--text-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+}
+
+.nav-links button, .navbar button {
+  padding: 8px 16px;
+  background-color: var(--danger);
+}
+
+.nav-links button:hover, .navbar button:hover {
+  background-color: var(--danger-hover);
+}
+
+   /* 4. AUTHENTICATION PAGES */
 
 .auth-container {
   height: 100vh;
@@ -18,215 +140,62 @@ body {
 
 .auth-card {
   width: 360px;
-  background: white;
+  background-color: var(--bg-card);
   padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
-
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.auth-card h2 {
-  text-align: center;
-}
-
-.auth-card input {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.auth-card button {
-  padding: 12px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-.auth-card button:hover {
-  background: #1d4ed8;
-}
-
-.auth-card button:disabled {
-  opacity: .7;
-  cursor: not-allowed;
-}
-
-.auth-card p {
+.auth-card h2, .auth-card p {
   text-align: center;
 }
 
 .auth-card a {
-  color: #2563eb;
+  color: var(--primary);
   text-decoration: none;
 }
 
-.error {
-  color: red;
-  text-align: center;
-}
-
-.dashboard {
-  padding: 30px;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.navbar button {
-  padding: 10px 18px;
-  background: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
-}
-
-.card h3 {
-  margin-bottom: 15px;
-}
-
-.card input {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.card button {
-  padding: 10px 18px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.content {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 20px;
-}
-
-.left {
-  min-height: 450px;
-}
-
-.right {
-  min-height: 450px;
-}
-
-.home {
-  min-height: 100vh;
-  background: #f5f5f5;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background: #2563eb;
-  color: white;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-links a {
-  color: white;
+.back-link {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  color: var(--primary);
   text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
 }
 
-.nav-links button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.back-link:hover {
+  text-decoration: underline;
 }
 
-.hero {
-  text-align: center;
-  margin-top: 80px;
-}
+   /* 5. LANDING & HOME PAGE */
 
-.hero h1 {
-  font-size: 40px;
-  margin-bottom: 16px;
-}
-
-.hero p {
-  max-width: 700px;
-  margin: auto;
-  line-height: 1.6;
-}
-
-.actions {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.actions button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-
-
-/* =========================
-   Landing Page
-========================= */
-
-.landing {
+.home, .landing {
   min-height: 100vh;
-  background: #f5f7fb;
+  background-color: var(--bg-main);
 }
 
-.hero {
+.hero, .home-hero {
   max-width: 900px;
-  margin: 80px auto;
+  margin: 70px auto 40px;
   text-align: center;
   padding: 0 20px;
 }
 
-.hero h1 {
+.hero h1, .home-hero h1 {
   font-size: 48px;
-  color: #1e293b;
+  color: var(--text-main);
   margin-bottom: 20px;
 }
 
-.hero p {
+.hero p, .home-hero p {
   font-size: 18px;
   line-height: 1.8;
-  color: #64748b;
+  color: var(--text-muted);
   max-width: 750px;
   margin: auto;
 }
@@ -238,31 +207,16 @@ body {
   margin-top: 35px;
 }
 
-.actions button {
-  padding: 14px 28px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.actions button:hover {
-  background: #1d4ed8;
-}
-
-.features {
+.features, .workflow, .overview {
   max-width: 1200px;
   margin: 80px auto;
   padding: 0 20px;
 }
 
-.features h2 {
+.features h2, .workflow h2, .overview h2 {
   text-align: center;
   margin-bottom: 40px;
-  color: #1e293b;
+  color: var(--text-main);
   font-size: 34px;
 }
 
@@ -272,94 +226,265 @@ body {
   gap: 24px;
 }
 
-.feature-card {
-  background: white;
-  border-radius: 10px;
+.feature-card, .step, .workflow-item {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  box-shadow: var(--shadow-md);
+  text-align: center;
 }
 
 .feature-card h3 {
   margin-bottom: 14px;
-  color: #2563eb;
+  color: var(--primary);
 }
 
-.feature-card p {
-  color: #64748b;
+.feature-card p, .step p {
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
-.workflow {
-  max-width: 1100px;
-  margin: 80px auto;
-  padding: 0 20px;
-}
-
-.workflow h2 {
-  text-align: center;
-  margin-bottom: 40px;
-  color: #1e293b;
-  font-size: 34px;
-}
-
-.steps {
+.steps, .workflow {
   display: flex;
   justify-content: center;
   gap: 24px;
   flex-wrap: wrap;
 }
 
-.step {
-  width: 220px;
-  background: white;
-  padding: 24px;
-  text-align: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
-}
-
-.step h3 {
+.step h3, .workflow-item span {
   width: 60px;
   height: 60px;
-  background: #2563eb;
-  color: white;
+  background-color: var(--primary);
+  color: var(--text-light);
   border-radius: 50%;
   margin: 0 auto 18px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 22px;
+  font-weight: bold;
 }
 
-.step p {
-  color: #64748b;
-  line-height: 1.6;
+   /* 6. DASHBOARD & DATA VIEW */
+
+.dashboard, .container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 30px;
+  margin: 40px 0;
+}
+
+.dashboard-card, .card, .section {
+  background-color: var(--bg-card);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard-card h3, .card h3 {
+  color: var(--primary);
+}
+
+.content, .grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+
+.left, .right {
+  min-height: 450px;
+}
+
+/* Dataset Cards & Controls */
+.dataset-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: var(--bg-alt);
+  transition: var(--transition);
+}
+
+.dataset-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.dataset-card h3 {
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.dataset-card p {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.dataset-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dataset-actions button {
+  flex: 1;
+}
+
+.dataset-actions button:last-child {
+  background-color: var(--danger);
+}
+
+.dataset-actions button:last-child:hover {
+  background-color: var(--danger-hover);
+}
+
+.stats-results {
+  margin-top: 20px;
+  background-color: var(--bg-alt);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.plot-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.plot-controls label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  gap: 6px;
+}
+
+   /* 7. TABLES & FOOTER */
+
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: var(--primary);
+  color: var(--text-light);
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--bg-alt);
+}
+
+tbody tr:hover {
+  background-color: var(--bg-hover);
 }
 
 .footer {
   margin-top: 80px;
-  background: #1e293b;
-  color: white;
+  background-color: var(--text-main);
+  color: var(--text-light);
   text-align: center;
   padding: 24px;
-}
-
-.footer p {
   font-size: 14px;
 }
 
-
-/* login back  */
-.back-link {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
+   /* 8. MEDIA QUERIES */
+@media (max-width: 900px) {
+  .grid, .content {
+    grid-template-columns: 1fr;
+  }
 }
 
-.back-link:hover {
+
+/* --- Additions to Section 1: Design Tokens & Reset --- */
+:root {
+  /* ... existing tokens ... */
+  --max-width: 1280px; /* Bumped from 1200px for analytics breathing room */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Additions to Section 2: Reusable UI --- */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
+}
+
+/* --- Additions to Section 3: Navigation --- */
+.nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links a:hover {
+  opacity: 0.85;
   text-decoration: underline;
+}
+
+/* --- Additions to Section 6: Dashboard & Data View --- */
+.dashboard, .container {
+  max-width: var(--max-width);
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.dataset-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* ... existing dataset-card styles ... */
+}
+
+.stats-results p {
+  margin: 8px 0;
+}
+
+/* Chart Container Wrapper */
+.chart-container {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  min-height: 420px;
+  background-color: var(--bg-card);
+}
+
+/* --- Additions to Section 8: Media Queries --- */
+@media (max-width: 700px) {
+  .home-navbar,
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
